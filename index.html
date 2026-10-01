@@ -1,0 +1,87 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>PeeJay AI Creator Studio</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="app-shell">
+    <aside class="sidebar">
+      <div class="brand"><div class="brand-mark">PJ</div><div><b>PeeJay</b><span>AI Creator Studio</span></div></div>
+      <nav>
+        <button class="nav-item active" data-section="dashboard">⌂ <span>Dashboard</span></button>
+        <button class="nav-item" data-section="scripts">✦ <span>Script Generator</span></button>
+        <button class="nav-item" data-section="prompts">◈ <span>Prompt Studio</span></button>
+        <button class="nav-item" data-section="captions">Aa <span>Caption Generator</span></button>
+        <button class="nav-item" data-section="ideas">✧ <span>Content Ideas</span></button>
+        <button class="nav-item" data-section="projects">▣ <span>My Projects</span></button>
+      </nav>
+      <div class="sidebar-bottom">
+        <div class="usage"><div class="usage-row"><span>Free credits</span><b>18 / 25</b></div><div class="bar"><i></i></div><small>Upgrade for unlimited creation.</small></div>
+        <button class="upgrade" onclick="alert('Premium checkout will be connected in the next version.')">✦ Upgrade to Pro</button>
+      </div>
+    </aside>
+
+    <main class="main">
+      <header class="topbar">
+        <button class="mobile-menu" onclick="document.querySelector('.sidebar').classList.toggle('open')">☰</button>
+        <div class="search">⌕ <input placeholder="Search projects..." id="search"></div>
+        <div class="top-actions"><button class="icon-btn">◐</button><div class="avatar">P</div></div>
+      </header>
+
+      <section id="dashboard" class="section active">
+        <div class="hero">
+          <div><span class="eyebrow">CREATOR WORKSPACE</span><h1>Turn your ideas into <em>content.</em></h1><p>Write scripts, create cinematic prompts, generate captions, and plan your next viral idea—all in one studio.</p></div>
+          <button class="primary" onclick="showSection('scripts')">+ Create content</button>
+        </div>
+        <div class="stats">
+          <div><span>Projects</span><strong>24</strong><small>↑ 12% this month</small></div>
+          <div><span>AI generations</span><strong>186</strong><small>18 credits remaining</small></div>
+          <div><span>Saved prompts</span><strong>42</strong><small>Across 6 categories</small></div>
+        </div>
+        <h2>What do you want to create?</h2>
+        <div class="tool-grid">
+          <button class="tool-card" onclick="showSection('scripts')"><b>🎬</b><strong>Video Script</strong><span>Build engaging scripts for YouTube, TikTok and Reels.</span><i>→</i></button>
+          <button class="tool-card" onclick="showSection('prompts')"><b>🖼️</b><strong>Prompt Studio</strong><span>Create detailed image and AI-video prompts.</span><i>→</i></button>
+          <button class="tool-card" onclick="showSection('captions')"><b>✍️</b><strong>Caption</strong><span>Turn your content into attention-grabbing captions.</span><i>→</i></button>
+          <button class="tool-card" onclick="showSection('ideas')"><b>💡</b><strong>Content Ideas</strong><span>Generate fresh ideas around your niche.</span><i>→</i></button>
+        </div>
+        <div class="section-head"><h2>Recent projects</h2><button onclick="showSection('projects')">View all →</button></div>
+        <div class="project-list" id="recent"></div>
+      </section>
+
+      <section id="scripts" class="section">
+        <div class="page-title"><span class="eyebrow">AI WRITING</span><h1>Script Generator</h1><p>Describe your idea and create a structured video script.</p></div>
+        <div class="workspace"><div class="panel form-panel"><label>What is your video about?</label><textarea id="scriptTopic" placeholder="Example: A young entrepreneur starts an AI business with no money..."></textarea><div class="two"><div><label>Platform</label><select id="platform"><option>YouTube</option><option>TikTok</option><option>Instagram Reels</option></select></div><div><label>Length</label><select id="length"><option>60 seconds</option><option>3 minutes</option><option>5 minutes</option></select></div></div><label>Tone</label><select id="tone"><option>Cinematic & inspiring</option><option>Funny & energetic</option><option>Emotional</option><option>Professional</option></select><button class="primary full" onclick="generateScript()">✦ Generate Script</button></div><div class="panel output"><div class="output-head"><span>GENERATED SCRIPT</span><button onclick="copyOutput('scriptOutput')">Copy</button></div><div id="scriptOutput" class="empty">Your generated script will appear here.</div></div></div>
+      </section>
+
+      <section id="prompts" class="section">
+        <div class="page-title"><span class="eyebrow">VISUAL CREATION</span><h1>Prompt Studio</h1><p>Generate production-ready prompts for images and AI video.</p></div>
+        <div class="workspace"><div class="panel form-panel"><label>Describe the scene</label><textarea id="promptTopic" placeholder="Example: Young African creator working at a futuristic desk..."></textarea><label>Format</label><select id="promptType"><option>Cinematic image prompt</option><option>AI video animation prompt</option><option>Product advertising prompt</option></select><label>Visual style</label><select id="visualStyle"><option>Photorealistic cinematic</option><option>3D animated</option><option>Anime</option><option>Luxury commercial</option></select><button class="primary full" onclick="generatePrompt()">✦ Generate Prompt</button></div><div class="panel output"><div class="output-head"><span>GENERATED PROMPT</span><button onclick="copyOutput('promptOutput')">Copy</button></div><div id="promptOutput" class="empty">Your production prompt will appear here.</div></div></div>
+      </section>
+
+      <section id="captions" class="section">
+        <div class="page-title"><span class="eyebrow">SOCIAL GROWTH</span><h1>Caption Generator</h1><p>Create captions that match your content and audience.</p></div>
+        <div class="workspace"><div class="panel form-panel"><label>Describe your post</label><textarea id="captionTopic" placeholder="Example: I just published a tutorial on creating AI influencers..."></textarea><label>Platform</label><select id="captionPlatform"><option>Instagram</option><option>TikTok</option><option>YouTube</option><option>Facebook</option></select><button class="primary full" onclick="generateCaption()">✦ Generate Caption</button></div><div class="panel output"><div class="output-head"><span>GENERATED CAPTION</span><button onclick="copyOutput('captionOutput')">Copy</button></div><div id="captionOutput" class="empty">Your caption will appear here.</div></div></div>
+      </section>
+
+      <section id="ideas" class="section">
+        <div class="page-title"><span class="eyebrow">CONTENT PLANNER</span><h1>Content Ideas</h1><p>Find practical ideas you can turn into videos today.</p></div>
+        <div class="panel idea-panel"><label>Your niche</label><input id="niche" placeholder="e.g. AI video creation, business, motivation"><button class="primary" onclick="generateIdeas()">Generate 10 ideas</button></div>
+        <div id="ideasOutput" class="ideas-grid"></div>
+      </section>
+
+      <section id="projects" class="section">
+        <div class="page-title"><span class="eyebrow">YOUR LIBRARY</span><h1>My Projects</h1><p>Your saved creative work.</p></div>
+        <div class="project-list" id="allProjects"></div>
+      </section>
+    </main>
+  </div>
+  <script src="app.js"></script>
+</body>
+</html>

@@ -1,0 +1,22 @@
+const projects=[
+ {title:"AI Influencer Launch Video",type:"Script",time:"Today"},
+ {title:"Luxury AI Creator Portrait",type:"Image Prompt",time:"Yesterday"},
+ {title:"10 AI Business Ideas",type:"Content Ideas",time:"Sep 29"}
+];
+function showSection(id){document.querySelectorAll(".section").forEach(x=>x.classList.remove("active"));document.getElementById(id).classList.add("active");document.querySelectorAll(".nav-item").forEach(x=>x.classList.toggle("active",x.dataset.section===id));document.querySelector(".sidebar")?.classList.remove("open");}
+document.querySelectorAll(".nav-item").forEach(x=>x.addEventListener("click",()=>showSection(x.dataset.section)));
+function renderProjects(target="recent"){const el=document.getElementById(target);if(!el)return;el.innerHTML=projects.map(p=>`<div class="project"><div><strong>${p.title}</strong><br><span>${p.type}</span></div><span>${p.time}</span></div>`).join("")}
+function saveProject(title,type){projects.unshift({title,type,time:"Just now"});renderProjects();renderProjects("allProjects")}
+async function callAI(payload){
+  const response=await fetch("/api/generate",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(payload)});
+  const data=await response.json().catch(()=>({}));
+  if(!response.ok) throw new Error(data.error||"AI generation failed.");
+  return data.output||"No output returned.";
+}
+function setBusy(button,busy){if(!button)return;button.disabled=busy;button.dataset.originalText ||= button.textContent;if(busy)button.textContent="Generating…";else button.textContent=button.dataset.originalText;}
+async function generateScript(){const btn=document.querySelector('#scripts button.primary');const topic=document.getElementById("scriptTopic").value.trim()||"an inspiring creator story";const tone=document.getElementById("tone").value;const platform=document.getElementById("platform").value;const length=document.getElementById("length").value;setBusy(btn,true);try{const out=await callAI({type:"script",topic,tone,platform,length});document.getElementById("scriptOutput").classList.remove("empty");document.getElementById("scriptOutput").textContent=out;saveProject(topic,"Script")}catch(e){document.getElementById("scriptOutput").classList.remove("empty");document.getElementById("scriptOutput").textContent="Error: "+e.message}finally{setBusy(btn,false)}}
+async function generatePrompt(){const btn=document.querySelector('#prompts button.primary');const topic=document.getElementById("promptTopic").value.trim()||"a professional AI creator";const type=document.getElementById("promptType").value;const style=document.getElementById("visualStyle").value;setBusy(btn,true);try{const out=await callAI({type:"prompt",topic,format:type,style});document.getElementById("promptOutput").classList.remove("empty");document.getElementById("promptOutput").textContent=out;saveProject(topic,"Prompt")}catch(e){document.getElementById("promptOutput").classList.remove("empty");document.getElementById("promptOutput").textContent="Error: "+e.message}finally{setBusy(btn,false)}}
+async function generateCaption(){const btn=document.querySelector('#captions button.primary');const topic=document.getElementById("captionTopic").value.trim()||"my latest creator project";const platform=document.getElementById("captionPlatform").value;setBusy(btn,true);try{const out=await callAI({type:"caption",topic,platform});document.getElementById("captionOutput").classList.remove("empty");document.getElementById("captionOutput").textContent=out;saveProject(topic,"Caption")}catch(e){document.getElementById("captionOutput").classList.remove("empty");document.getElementById("captionOutput").textContent="Error: "+e.message}finally{setBusy(btn,false)}}
+async function generateIdeas(){const btn=document.querySelector('#ideas button.primary');const niche=document.getElementById("niche").value.trim()||"AI content creation";setBusy(btn,true);try{const out=await callAI({type:"ideas",niche});document.getElementById("ideasOutput").innerHTML=out.split(/\n+/).filter(Boolean).map((x,i)=>`<div class="idea"><b>${String(i+1).padStart(2,"0")}</b><span>${x.replace(/^\d+[.)]\s*/,"")}</span></div>`).join("");saveProject(niche,"Content Ideas")}catch(e){document.getElementById("ideasOutput").innerHTML=`<div class="idea"><b>!</b><span>Error: ${e.message}</span></div>`}finally{setBusy(btn,false)}}
+function copyOutput(id){navigator.clipboard?.writeText(document.getElementById(id).textContent);alert("Copied to clipboard.")}
+renderProjects();renderProjects("allProjects");
